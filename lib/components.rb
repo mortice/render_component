@@ -82,7 +82,7 @@ module Components
     private
       def component_response(options, reuse_response)
         klass    = component_class(options)
-        request  = request_for_component(klass.controller_name, options)
+        request  = request_for_component(klass.controller_path, options)
         new_response = reuse_response ? response : response.dup
 
         klass.process_with_components(request, new_response, self)
@@ -100,14 +100,14 @@ module Components
       # Create a new request object based on the current request.
       # The new request inherits the session from the current request,
       # bypassing any session options set for the component controller's class
-      def request_for_component(controller_name, options)
+      def request_for_component(controller_path, options)
         new_request         = request.dup
         new_request.session = request.session
 
         new_request.instance_variable_set(
           :@parameters,
           (options[:params] || {}).with_indifferent_access.update(
-            "controller" => controller_name, "action" => options[:action], "id" => options[:id]
+            "controller" => controller_path, "action" => options[:action], "id" => options[:id]
           )
         )
 
