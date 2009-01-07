@@ -10,7 +10,7 @@ module Components
       attr_accessor :parent_controller
 
       alias_method_chain :process_cleanup, :render_component
-      alias_method_chain :set_session_options, :render_component
+      alias_method_chain :session=, :render_component
       alias_method_chain :flash, :render_component
       alias_method_chain :assign_shortcuts, :render_component
       alias_method_chain :send_response, :render_component
@@ -125,8 +125,8 @@ module Components
         end
       end
 
-      def set_session_options_with_render_component(request)
-        set_session_options_without_render_component(request) unless component_request?
+      def session_with_render_component=(options = {})
+        session_without_render_component=(options) unless component_request?
       end
 
       def process_cleanup_with_render_component
@@ -134,7 +134,7 @@ module Components
       end
       
       def assign_shortcuts_with_render_component(request, response)
-        assign_shortcuts_without_flash(request, response)
+        assign_shortcuts_without_render_component(request, response)
         flash(:refresh)
         flash.sweep if @_session && !component_request?
       end
