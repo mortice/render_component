@@ -3,8 +3,8 @@ module Components
     base.class_eval do
       include InstanceMethods
       extend ClassMethods
-      helper HelperMethods
-
+#      helper HelperMethods
+      ActionView::Base.send(:include, HelperMethods)
       # If this controller was instantiated to process a component request,
       # +parent_controller+ points to the instantiator of this controller.
       attr_accessor :parent_controller
