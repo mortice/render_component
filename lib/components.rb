@@ -50,7 +50,7 @@ module Components
       # Renders the component specified as the response for the current method
       def render_component(options) #:doc:
         component_logging(options) do
-          render_for_text(component_response(options, true).body, response.headers["Status"])
+          render_for_text(component_response(options, true).body, response.status)
         end
       end
 
