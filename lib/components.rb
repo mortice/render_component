@@ -4,15 +4,12 @@ module Components
       include InstanceMethods
       extend ClassMethods
       ActionView::Base.send(:include, HelperMethods)
-
       # If this controller was instantiated to process a component request,
       # +parent_controller+ points to the instantiator of this controller.
       attr_accessor :parent_controller
 
       alias_method_chain :process_cleanup, :render_component
-      alias_method_chain :session=, :render_component
       alias_method_chain :flash, :render_component
-      alias_method_chain :perform_action, :render_component
       alias_method_chain :send_response, :render_component
 
       alias_method :component_request?, :parent_controller
@@ -35,11 +32,6 @@ module Components
   end
 
   module InstanceMethods
-    def perform_action_with_render_component
-      perform_action_without_render_component
-      remove_instance_variable(:@_flash) if defined? @_flash
-    end
-
     # Extracts the action_name from the request parameters and performs that action.
     def process_with_components(request, response, method = :perform_action, *arguments) #:nodoc:
       flash.discard if component_request?
@@ -72,8 +64,8 @@ module Components
         end
       end
 
-      def flash_with_render_component(refresh = false) #:nodoc:
-        if !defined?(@_flash) || refresh
+      def flash_with_render_component
+        if !defined?(@_flash)
           @_flash =
             if defined?(@parent_controller)
               @parent_controller.flash
@@ -130,12 +122,8 @@ module Components
         end
       end
 
-      def session_with_render_component=(options = {})
-        session_without_render_component=(options) unless component_request?
-      end
-
       def process_cleanup_with_render_component
         process_cleanup_without_render_component unless component_request?
-      end
+      end      
   end
 end
